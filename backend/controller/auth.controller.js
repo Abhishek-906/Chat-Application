@@ -2,22 +2,36 @@
 import User from "../models/user.model.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
+import { errorHandler } from "../utils/error.js";
 
-export const signup = async(req , res)=>{
+export const signup = async(req , res , next)=>{
     const {username , email , password , confirmPassword , gender} = req.body 
     let validUser 
      validUser   = await User.findOne({email});
-     if(validUser){
-        return res.status(400).json({
-            success: false ,
-            message:"User already exist"
-        })
-     }
 
-  if(password!==confirmPassword){
-    return res.status(400).json({
-        error:"Password not match"
-    })
+
+    //  if(validUser){
+    //     return res.status(400).json({             
+    //         success: false ,
+    //         message:"User already exist"
+    //     })
+    //  }
+                   //OR
+  
+       if(validUser){
+        return next(errorHandler(400, "User already exists")) ;
+       }
+
+
+  // if(password!==confirmPassword){
+  //   return res.status(400).json({
+  //       error:"Password not match"
+  //   })
+// }
+ //or
+
+ if(password!==confirmPassword){
+  return next(errorHandler(400, "Password not match")) ;
 }
 
     const hashedPassword = bcrypt.hashSync(password , 10)
@@ -43,11 +57,11 @@ export const signup = async(req , res)=>{
         profilePic:newUser.profilePic,     
      })
   }catch(error){
-console.log("Error"+ error)
-   res.status(500).json({
-    error: "Internal server error",
-    
-})
+// console.log("Error"+ error)
+//    res.status(500).json({
+//     error: "Internal server error",
+// })
+next(error)
   }
 } 
 
