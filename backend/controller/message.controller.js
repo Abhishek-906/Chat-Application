@@ -1,5 +1,6 @@
 import Conversation from "../models/conversation.model.js"
 import Message from "../models/message.model.js"
+
 export const sendMessage = async (req , res , next)=>{
     try{
         const {message} = req.body
@@ -29,6 +30,23 @@ export const sendMessage = async (req , res , next)=>{
         //sockete io Functionality 
        
          res.status(201).json(newMessage)
+    }catch(error){
+        next(error)
+    }
+}
+
+export const getMessage = async(req , res , next)=>{
+    try{
+      const {id:userToMesssage}=req.params
+      const senderId = req.user.id
+      const conversation = await Conversation.findOne({
+        participants:{$all :[senderId , userToMesssage]},
+      }).populate("messages")
+      if(!conversation){
+        return res.status(200).json([])
+      }
+      const messages = conversation.messages
+      res.status(200).json(messages)
     }catch(error){
         next(error)
     }
