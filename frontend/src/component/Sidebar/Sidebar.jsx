@@ -11,7 +11,6 @@ const  Sidebar = () => {
        <div className='divider px-3'></div>
        <Conversations/> 
        <LogoutButton/>
-    
     </div>
   )
 }
