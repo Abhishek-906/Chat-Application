@@ -13,9 +13,10 @@ const useGetConversations = () => {
         const res = await fetch("/api/users")
 
 
-        // if (!res.ok) {
-        //   throw new Error(`Error: ${res.status} ${res.statusText}`);
-        // }
+        if (!res.ok) {
+          throw new Error(`Error: ${res.status} ${res.statusText}`);
+        }
+        
 
         const data = await res.json()
 
